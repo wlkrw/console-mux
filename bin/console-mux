@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.dirname(__FILE__)) + '/../lib/console/mux'
+
+#require 'ruby-debug'
+#Debugger.start
+
+Console::Mux.run_argv
+
