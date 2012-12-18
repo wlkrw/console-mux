@@ -27,18 +27,18 @@ A limited shell is available to control running processes.  This is a
 Ruby shell (provided by [Ripl](https://github.com/cldwalker/ripl)),
 and so accepts Ruby syntax.
 
-* *status* Print the status of running commands
+* `status` Print the status of running commands
 
-* *lastlog <string or regex>* Scan through the output buffer to print
+* `lastlog <string or regex>` Scan through the output buffer to print
    lines matching the given pattern
 
-* *start <command>* Start the named command
+* `start <command>` Start the named command
 
-* *stop <command>* Stop the named command
+* `stop <command>` Stop the named command
 
-* *restart <command>* Stop and then restart the named command
+* `restart <command>` Stop and then restart the named command
 
-* *exit* (or *quit*, *^D*) Attempt to stop all commands by first
+* `exit` (or `quit`, `^D`) Attempt to stop all commands by first
    interrupting each command (`^C`) and finally forcibly terminating
    after a timeout
 
