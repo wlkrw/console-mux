@@ -40,9 +40,10 @@ module Console
 
       BUFFER_LINES = 10000
 
-      attr_reader :commands, :default_options, :formatter, :buffer, :logger
+      attr_reader :commands, :options, :default_options, :formatter, :buffer, :logger
 
       def initialize(options={})
+        @options = options
         @commands = CommandSet.new
         @default_options = Hash.new
         @base_dir = '.'
@@ -58,7 +59,9 @@ module Console
                                       BUFFER_LINES,
                                       :formatter => formatter)
         logger.add @buffer
+      end
 
+      def startup
         EventMachine.run do
           logger.info { 'Initializing' }
 
@@ -149,16 +152,20 @@ module Console
       #           {:command => 'ls'})
       #
       # @param [Hash] *opts one or more option hashes passed to +Command.new+.
-      def run(*optses)
-        names = optses.map do |opts|
+      def run(*opts_hashes)
+        names = add(*opts_hashes).compact
+        seq_names(names)
+      end
+
+      # Like #run, but does not start any processes.
+      def add(*opts_hashes)
+        opts_hashes.map do |opts|
           if opts.kind_of? Array
             opts.map { |o| make_command_and_add(o) }
           else
             make_command_and_add(opts)
           end
         end
-
-        seq_names(names.compact)
       end
 
       def make_command(opts)

@@ -58,7 +58,7 @@ module Console
     end
 
     def self.run(options)
-      Console.new(options)
+      Console.new(options).startup
     end
   end
 end

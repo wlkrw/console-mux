@@ -62,6 +62,7 @@ module Console
                              :status,
                              :lastlog,
                              :run,
+                             :add,
                              :start,
                              :stop,
                              :restart,
