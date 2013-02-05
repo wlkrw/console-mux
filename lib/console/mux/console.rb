@@ -188,6 +188,13 @@ module Console
       end
       private :make_command_and_add
 
+      # Run a sequence of names where each name is the name of a
+      # process that may be started.  Each process identified by
+      # +names+ will be started, and only after it exits will the
+      # remaining processes be started.
+      #
+      # Each element of +names+ may be a single name or an array of
+      # names, in which case all are started in parallel.
       def seq_names(names)
         return unless names.size > 0
 
