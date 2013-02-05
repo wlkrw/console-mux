@@ -74,6 +74,10 @@ module Console
       # `[new_command, new_opts]`.
       def initialize(opts)
         @opts = opts.dup
+        # one-level-deep dup, required to properly dup :env, possibly others
+        opts.each do |k,v|
+          @opts[k] = v.dup if v.kind_of?(Hash)
+        end
 
         self.env ||= {}
         self.run_with ||= []
