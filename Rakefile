@@ -12,6 +12,8 @@ Rake::TestTask.new(:test) do |t|
   t.libs.push 'test'
 end
 
+task :default => :test
+
 Rake::VersionTask.new
 
 Gem::PackageTask.new(gemspec) do |p|
