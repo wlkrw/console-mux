@@ -288,7 +288,12 @@ module Console
 
       def puts(message = '')
         # See http://stackoverflow.com/questions/1512028/gnu-readline-how-do-clear-the-input-line
-        print "\b \b" * Readline.line_buffer.size
+        #
+        # FIXME: Mac OS X 10.8 Mountain Lion seems to no longer have
+        # Readline.line_buffer?? Or does it just return nil when
+        # empty?
+        buf = Readline.line_buffer
+        print "\b \b" * buf.size if buf
         print "\r"
         begin
           $stdout.puts message
