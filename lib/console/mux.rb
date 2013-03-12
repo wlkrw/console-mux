@@ -28,6 +28,8 @@ module Console
   module Mux
     include Log4r
 
+    VERSION = File.read(File.expand_path('../../../VERSION', __FILE__), 16).strip
+
     BUNDLE_EXEC_SH = File.expand_path('bundle_exec.sh',
                                       File.join(__FILE__, '..', 'mux'))
 
@@ -45,6 +47,10 @@ module Console
         end
         opts.on('-f', '--init=FILE', 'Load this init file') do |file|
           options[:init_file] = file
+        end
+        opts.on('--version', 'Print the version and exit') do
+          puts VERSION
+          exit
         end
       end.parse!(args)
 
