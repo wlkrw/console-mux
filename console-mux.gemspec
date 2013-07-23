@@ -2,8 +2,8 @@ Gem::Specification.new do |s|
   s.name        = "console-mux"
   s.version     = File.read('VERSION')
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["CG Labs"]
-  s.email       = ["eng@commongroundpublishing.com"]
+  s.authors     = ["Patrick Mahoney"]
+  s.email       = ["pat@polycrystal.org"]
   s.description = "Multiplex several commands on one console"
   s.summary     = "Multiplex several commands on one console"
 
