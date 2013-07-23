@@ -92,33 +92,6 @@ module Console
         end
       end
 
-      def run_commands()
-        next_command = commands.command_q.shift
-        if (!next_command.nil?)
-          commands.startCommand( next_command )
-
-#          if next_command.opts[:blocking]
-#            EventMachine.next_tick do
-#              check_command(next_command) 
-#            end
-#          else
-#          end
-
-          if (!(commands.command_q.empty?))
-            EventMachine.next_tick do
-              run_commands() 
-            end
-          end
-        end
-
-        # EM::Iterator requires the beta version of eventmachine
-#        EM::Iterator.new(commands.command_q).each do |command,iter| 
-#          commands.start( commands.command_q.shift )
-#          iter.next
-#        end
-      end
-
-
       # Using set_ rather than '=' style accessor so config file needn't
       # use self.default_options =.
       def set_default_options(opts)
