@@ -1,6 +1,14 @@
 console-mux
 ===========
 
+[![Gem Version][gem-img]][gem]
+[![Build Status][travis-img]][travis-ci]
+
+[gem-img]: https://badge.fury.io/rb/console-mux.png
+[gem]: http://rubygems.org/gems/console-mux)
+[travis-img]: https://api.travis-ci.org/pmahoney/console-mux.png
+[travis-ci]: https://travis-ci.org/pmahoney/console-mux
+
 A tool inspired by [Foreman](https://github.com/ddollar/foreman) for
 multiplexing the output of several services into a single console.
 
@@ -19,6 +27,10 @@ processes.  They can use individual RVM or rbenv rubies.
 
 The console output from both apps will be multiplexed (interleaved
 line by line) into a single console.
+
+![Screenshot][screenshot]
+
+[screenshot]: http://polycrystal.org/~pat/scratch/console-mux.png
 
 Shell
 -----
