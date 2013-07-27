@@ -223,19 +223,22 @@ module Console
       end
 
       def shutdown
+        timer = EventMachine.add_timer(30) do
+          logger.error { "could not halt all processes; giving up :(" }
+          EventMachine.stop_event_loop
+        end
+        
+        commands.on(:stopped) do
+          EventMachine.cancel_timer(timer)
+
+          # If not wrapped in next_tick, EventMachine doesn't exit
+          # immediately (bug?)
+          EventMachine.next_tick { EventMachine.stop_event_loop }
+        end
+
         if commands.stopped?
           EventMachine.stop_event_loop
         else
-          timer = EventMachine.add_timer(30) do
-            logger.error { "could not halt all processes; giving up :(" }
-            EventMachine.stop_event_loop
-          end
-
-          commands.on(:stopped) do
-            EventMachine.cancel_timer(timer)
-            EventMachine.stop_event_loop
-          end
-
           commands.stop_all
         end
       end
