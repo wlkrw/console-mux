@@ -64,9 +64,6 @@ module Console
 
       # Called by the child handler
       def unbind
-        @stdin.close rescue nil
-        @stdout.close rescue nil
-
         pid2, status = ::Process.waitpid2(pid, ::Process::WNOHANG)
         if pid2
           on_exit(status)
@@ -135,22 +132,18 @@ module Console
 
         @started_at = Time.now
 
-        stdin, stdout, pid = Dir.chdir command.dir do
+        @stdin, @stdout, @pid = Dir.chdir(command.dir) do
           with_clean_env(command.env) do
             PTY.spawn(command.commandline)
           end
         end
-
-        @stdin = stdin
-        @stdout = stdout
-        @pid = pid
         
         logger.info { "in #{File.expand_path(command.dir)}" }
         logger.info { "with #{command.env.to_a.map{|k,v| "#{k}=#{v}"}.join(' ')}" }
         logger.info { command }
         logger.info { "started process #{pid}" }
         
-        @handler = EventMachine.attach(stdout, PTYHandler, self)
+        @handler = EventMachine.attach(@stdout, PTYHandler, self)
       end
 
       def try_kill(signals)
@@ -197,6 +190,9 @@ module Console
             logger.warn { "process #{pid} exited #{status.inspect}" }
           end
         ensure
+          @stdin.close rescue nil
+          @stdout.close rescue nil
+
           @handler = nil
           fire(:exit)
         end
