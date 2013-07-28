@@ -31,16 +31,15 @@ module Console
         # waits for an +:exit+ event from each.
         #
         # @param [Array<Process>] processes
-        def join(processes)
-          pending_exit = processes.size
+        def join(processes, &block)
+          q = EventMachine::Queue.new
+
           processes.each do |proc|
-            proc.on(:exit) do
-              pending_exit -= 1
-              if pending_exit == 0 && block_given?
-                yield
-              end
-            end
+            proc.on(:exit) { q.push :exit }
           end
+
+          (processes.size - 1).times { q.pop {} }
+          q.pop { block.call }  # all have exited
         end
       end
 
