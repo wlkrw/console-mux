@@ -39,7 +39,7 @@ module Console
         :init_file => nil
       }
 
-      OptionParser.new do |opts|
+      oparser = OptionParser.new do |opts|
         opts.banner = "Usage: console-mux <init_file>"
         opts.on_tail('-h', '--help', 'Show this message') do
           puts opts
@@ -52,7 +52,14 @@ module Console
           puts VERSION
           exit
         end
-      end.parse!(args)
+      end
+      oparser.parse!(args)
+
+      options[:init_file] ||= args.shift
+      unless options[:init_file]
+        $stderr.puts oparser
+        exit 1
+      end
 
       begin
         run(options)
