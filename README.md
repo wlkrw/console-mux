@@ -12,6 +12,11 @@ console-mux
 A tool inspired by [Foreman](https://github.com/ddollar/foreman) for
 multiplexing the output of several services into a single console.
 
+With a service oriented architecture such that development work on one
+app requires several other supporting services to be running,
+console-mux can run all those services in a single console window and
+combine their output all in one place.
+
     $ gem install console-mux
     $ cat processes.rb
     run(:command => 'rails s', :chdir => 'app1')
@@ -30,7 +35,7 @@ line by line) into a single console.
 
 ![Screenshot][screenshot]
 
-[screenshot]: http://polycrystal.org/~pat/scratch/console-mux.png
+[screenshot]: http://polycrystal.org/~pat/scratch/console-mux2.png
 
 Shell
 -----
