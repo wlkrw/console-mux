@@ -66,6 +66,7 @@ module Console
                              :start,
                              :stop,
                              :restart,
+                             :reload,
                              :set_default_options,
                              :shutdown
                             ]

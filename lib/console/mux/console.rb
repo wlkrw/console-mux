@@ -85,10 +85,40 @@ module Console
         old_base = @base_dir
         @base_dir = File.expand_path(File.dirname(file))
         begin
+          yield if block_given?
           @shell.instance_eval(File.read(file), file)
           @last_file = file
         ensure
           @base_dir = old_base
+        end
+      end
+
+      def reload
+        begin
+          load(@options[:init_file]) do
+            # redefine #run to detect and properly stop old commands before running their replacement
+            def self.run(*args)
+              reloaded_commands = [args].flatten.map { |o| make_command(o) }
+              reloaded_commands.each do |c|
+                cmd_method = if @commands.running?(c.name)
+                               :restart
+                             elsif @commands.ended?(c.name)
+                               :start
+                             end
+                if cmd_method
+                  @commands.remove(c.name)
+                  @commands.add(c, false)
+                  @commands.send(cmd_method, c.name)
+                else
+                  @commands.add_and_start(c)
+                end
+              end
+            end
+          end
+        ensure
+          def self.run(*args)
+            original_run(*args)
+          end
         end
       end
 
@@ -130,6 +160,8 @@ module Console
         seq_names(names)
       end
 
+      alias_method :original_run, :run
+
       # Like #run, but does not start any processes.
       def add(*opts_hashes)
         opts_hashes.map do |opts|
@@ -151,9 +183,9 @@ module Console
           Command.new(opts)
         rescue => e
           # optimistically assume console-mux errors are uninteresting
-          first_relevant = e.backtrace.find { |line| !(line =~ %r{lib/console/mux}) }
-          # logger.error e.backtrace.join("\n\t")
-          logger.error { "#{opts[:command]}: #{e.message} at #{first_relevant}" }
+          # first_relevant = e.backtrace.find { |line| !(line =~ %r{lib/console/mux}) }
+          logger.error e.backtrace.join("\n\t")
+          # logger.error { "#{opts[:command]}: #{e.message} at #{first_relevant}" }
           nil
         end
       end

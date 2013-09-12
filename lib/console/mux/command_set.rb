@@ -66,8 +66,8 @@ module Console
       #
       # @return [String] the command name, which may be different from
       # +command.name+ if required to be unique within this CommandSet
-      def add(command)
-        name = unique_name(command.name)
+      def add(command, unique = true)
+        name = unique ? unique_name(command.name) : command.name
 
         @commands << command
         @commands_by_name[name] = command
@@ -157,6 +157,14 @@ module Console
         else
           raise "no process for #{name}"
         end
+      end
+
+      def ended?(name)
+        @stopped_at.include?(name)
+      end
+
+      def running?(name)
+        @processes[name]
       end
 
       def pretty_seconds(secs)
