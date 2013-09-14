@@ -99,20 +99,22 @@ module Console
             # redefine #run to detect and properly stop old commands before running their replacement
             def self.run(*args)
               reloaded_commands = [args].flatten.map { |o| make_command(o) }
-              reloaded_commands.each do |c|
-                cmd_method = if @commands.running?(c.name)
+              cmd_methods = reloaded_commands.map do |c|
+                cmd_method = if commands.running?(c.name)
                                :restart
-                             elsif @commands.ended?(c.name)
+                             elsif commands.ended?(c.name)
                                :start
                              end
                 if cmd_method
-                  @commands.remove(c.name)
-                  @commands.add(c, false)
-                  @commands.send(cmd_method, c.name)
+                  commands.remove(c.name)
+                  commands.add(c, false)
+                  cmd_method
                 else
-                  @commands.add_and_start(c)
+                  commands.add(c)
+                  :start
                 end
               end
+              seq_names(reloaded_commands, cmd_methods)
             end
           end
         ensure
@@ -207,7 +209,10 @@ module Console
       #
       # Each element of +names+ may be a single name or an array of
       # names, in which case all are started in parallel.
-      def seq_names(names)
+      #
+      # The +cmds+ array of symbols represent @commands method to use 
+      # with the name of the corresponding name eg restart
+      def seq_names(names, cmds = nil)
         return unless names.size > 0
 
         name_or_ary = names.shift
@@ -215,8 +220,11 @@ module Console
           # name may be a single name or array of names, so we
           # normalize everything to an array
           to_start = [name_or_ary].flatten
-          procs = to_start.map { |n| start(n) }
-          
+          procs = if cmds
+            to_start.zip(cmds).map { |n, m| commands.send(m, n) }
+          else
+            to_start.map { |n| start(n) }
+          end
           CommandSet.join(procs) do
             if names.size > 0
               to_start.each { |n| commands.remove(n) }
